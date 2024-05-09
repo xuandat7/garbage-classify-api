@@ -3,7 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse
 from pydantic import BaseModel
 from pathlib import Path
-import utils
+
 from utils import model, predict
 import uvicorn
 import shutil

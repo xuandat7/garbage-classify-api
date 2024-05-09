@@ -2,16 +2,21 @@ from tensorflow.keras.models import load_model
 from tensorflow.keras.preprocessing import image
 import numpy as np
 from PIL import Image
+from keras.applications.resnet50 import preprocess_input
 
 model = load_model('models/model.resnet50.h5')
-output_class = ["cardboard", "glass", "metal","paper", "plastic", "trash"]
-    
+output_class = ["battery", "glass", "metal","organic", "paper", "plastic"]
+
+def preprocessing_input(img_path):
+    img = image.load_img(img_path, target_size=(224, 224))
+    img = image.img_to_array(img)
+    img = np.expand_dims(img, axis=0)
+    img = preprocess_input(img) # ResNet50 preprocess_input
+    return img
+
 async def predict(new_image_path):
     try:
-        test_image = image.load_img(new_image_path, target_size=(224, 224))
-        test_image = image.img_to_array(test_image) / 255
-        test_image = np.expand_dims(test_image, axis=0)
-
+        test_image = preprocessing_input(new_image_path)
         predicted_array = model.predict(test_image)
         predicted_value = output_class[np.argmax(predicted_array)]
         predicted_accuracy = round(np.max(predicted_array) * 100, 2)
